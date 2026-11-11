@@ -1,0 +1,979 @@
+/* ============================================================
+   光辉足迹 · 纪念中国工农红军长征胜利90周年
+   主站样式表  style.css
+
+   适配界面规格：1920 / 1440 / 720（并向下兼容移动端）
+   运行环境：Chrome 129
+
+   目录
+   1. 字体
+   2. 基础与重置
+   3. 顶部导航
+   4. 通用区块与滚动动效
+   5. ① 主封面（第一屏）
+   6. ② 长征时间轴（深红棕）+ 领袖人物列
+   7. ③ 长征背景与简介（米白）
+   8. ④ 今日余晖（黑色）
+   9. 页脚
+   10. 图片署名
+   11. 响应式（1920 / 900 / 720 / 560）
+   ============================================================ */
+
+/* ---------- 1. 字体 ---------- */
+@font-face {
+  font-family: "LongMarchSerif";
+  /* 字体已按本项目实际用字子集化（1033 个字符，24.3 MB → 396 KB） */
+  src: url("fonts/SourceHanSerifSC-Bold-subset.woff2") format("woff2");
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* ---------- 2. 基础与重置 ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  color: #1a1a1a;
+  background-color: #f3ece0;
+  background-image: radial-gradient(130% 80% at 50% 0%, #fbf7ef 0%, #f1e9dc 55%, #e6dccb 100%);
+  background-attachment: fixed;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* 重点标题统一使用思源宋体 */
+.serif-title,
+.hero-title,
+.site-nav .brand,
+.section-title,
+.poem-title,
+.poem-lines p {
+  font-family: "LongMarchSerif", "Songti SC", "STSong", "SimSun", serif;
+  font-weight: 700;
+}
+
+/* 锚点跳转时给固定导航留出空间 */
+section[id],
+header[id] {
+  scroll-margin-top: 64px;
+}
+
+/* ---------- 3. 顶部导航 ---------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 40px;
+  color: #f5f0e6;
+  background: rgba(34, 9, 9, 0.94);
+  border-bottom: 1px solid rgba(232, 176, 107, 0.22);
+  backdrop-filter: blur(8px);
+}
+
+.site-nav .brand {
+  font-size: 17px;
+  letter-spacing: 4px;
+  color: #f0e2ce;
+  white-space: nowrap;
+}
+
+.site-nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 26px;
+}
+
+.site-nav a {
+  position: relative;
+  display: inline-block;
+  color: #d9cbb3;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 1px;
+  background: #e8b06b;
+  transition: width 0.3s ease;
+}
+
+.site-nav a:hover,
+.site-nav a.is-current {
+  color: #fff;
+}
+
+.site-nav a:hover::after,
+.site-nav a.is-current::after {
+  width: 100%;
+}
+
+/* ---------- 4. 通用区块与滚动动效 ---------- */
+.section {
+  position: relative;
+  padding: 96px 24px;
+  overflow: hidden;
+}
+
+.section-inner {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.section-label {
+  margin-bottom: 12px;
+  font-size: 12px;
+  letter-spacing: 6px;
+  color: #b98a4e;
+}
+
+.section-title {
+  margin-bottom: 24px;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.4;
+  letter-spacing: 6px;
+}
+
+.lead {
+  max-width: 900px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  line-height: 2.05;
+}
+
+/* 滚动进场：仅在 JS 可用时才隐藏，保证降级可读 */
+.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.85s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.js-ready .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.js-ready .intro-card.reveal:nth-child(2) { transition-delay: 0.08s; }
+.js-ready .intro-card.reveal:nth-child(3) { transition-delay: 0.16s; }
+.js-ready .intro-card.reveal:nth-child(4) { transition-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js-ready .reveal,
+  .js-ready .timeline-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- 5. ① 主封面 ---------- */
+.hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding: 96px 6%;
+  overflow: hidden;
+  color: #e9e2d4;
+}
+
+/* 底层：长征主题宣传图 */
+.hero-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("images/background/bg-shade2-jpg.jpg") center center / cover no-repeat;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+/* 中层：深红渐变遮罩，提升文字对比度 */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    115deg,
+    rgba(8, 4, 4, 0.94) 0%,
+    rgba(12, 5, 5, 0.84) 38%,
+    rgba(70, 12, 10, 0.55) 74%,
+    rgba(40, 8, 7, 0.6) 100%
+  );
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(28px, 6vw, 90px);
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+.hero-copy {
+  flex: 1 1 460px;
+  max-width: 640px;
+}
+
+.hero-sub {
+  margin-bottom: 18px;
+  font-size: 13px;
+  letter-spacing: 8px;
+  color: #d8b98a;
+}
+
+.hero-title {
+  margin-bottom: 24px;
+  font-size: clamp(48px, 7vw, 104px);
+  line-height: 1.08;
+  letter-spacing: 12px;
+  color: #f8f1e3;
+  text-shadow: 0 6px 30px rgba(0, 0, 0, 0.6);
+}
+
+.hero-quote {
+  margin-bottom: 24px;
+  padding-left: 18px;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 2.1;
+  color: #e3d7c4;
+  border-left: 2px solid #b7332c;
+}
+
+.hero-meta {
+  margin-bottom: 32px;
+  font-size: 13px;
+  letter-spacing: 5px;
+  color: #b98a4e;
+}
+
+.hero-cta {
+  display: inline-block;
+  padding: 12px 34px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: #f0e2ce;
+  text-decoration: none;
+  border: 1px solid rgba(232, 176, 107, 0.7);
+  transition: all 0.35s ease;
+}
+
+.hero-cta:hover {
+  color: #fff;
+  background: #b7332c;
+  border-color: #b7332c;
+  box-shadow: 0 12px 28px rgba(183, 51, 44, 0.35);
+}
+
+/* 顶层：诗词卡片（点击进入 poem.html） */
+.hero-poem-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(150px, 18vw, 250px);
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6);
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s ease,
+    border-color 0.5s ease;
+}
+
+.hero-poem-card img {
+  width: 100%;
+  height: auto;
+}
+
+.hero-poem-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  border-color: #f5f0e6;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 34px rgba(255, 255, 255, 0.28);
+}
+
+.hero-poem-card::after {
+  content: "点击进入长征诗卷 ›";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 26px 0 10px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.hero-poem-card:hover::after {
+  opacity: 1;
+}
+
+/* ---------- 6. ② 长征时间轴（深红棕） ---------- */
+.section-timeline {
+  padding: 96px 0;
+  color: #eadfd2;
+  background-color: #3a1412;
+  background-image:
+    radial-gradient(90% 70% at 6% 0%, rgba(150, 44, 32, 0.45) 0%, rgba(58, 20, 18, 0) 62%),
+    linear-gradient(160deg, #40170f 0%, #33110e 56%, #2a0d0b 100%);
+}
+
+.section-timeline .section-label {
+  color: #d9a05c;
+}
+
+.section-timeline .section-title {
+  color: #fdf1de;
+}
+
+.section-timeline .timeline-lead {
+  color: #cdb9a5;
+}
+
+/* 三栏：时间轴 0–45% / 领袖人物 45–60% / 竖图 60–100% */
+.section-timeline .section-inner {
+  display: grid;
+  grid-template-columns: 45% 15%;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.timeline-col {
+  padding-left: clamp(20px, 6vw, 110px);
+  padding-right: clamp(12px, 2vw, 28px);
+}
+
+/* 右侧竖版插图：上下顶到区块边界，宽度约占屏幕 40% */
+.timeline-bg-layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 0;
+  width: 40%;
+  height: 100%;
+  background: url("images/background/bg-hero2-jpg.jpg") center center / cover no-repeat;
+  filter: saturate(1.02) contrast(1.05) brightness(1.18);
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.55) 14%,
+    #000 45%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.55) 14%,
+    #000 45%,
+    #000 100%
+  );
+}
+
+/* 在插图上叠一层同色渐变，使图片与纯色背景自然融合 */
+.timeline-bg-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      #3a1412 0%,
+      rgba(58, 20, 18, 0.72) 14%,
+      rgba(58, 20, 18, 0.28) 42%,
+      rgba(58, 20, 18, 0.08) 72%,
+      rgba(42, 13, 11, 0.12) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(42, 13, 11, 0.5) 0%,
+      rgba(42, 13, 11, 0) 20%,
+      rgba(42, 13, 11, 0) 72%,
+      rgba(42, 13, 11, 0.55) 100%
+    );
+}
+
+.timeline-lead {
+  max-width: 520px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  line-height: 2.05;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 30px;
+  margin-top: 26px;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 5px;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 176, 107, 0.05) 0%,
+    rgba(232, 176, 107, 0.6) 10%,
+    rgba(232, 176, 107, 0.6) 90%,
+    rgba(232, 176, 107, 0.05) 100%
+  );
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  left: -27px;
+  width: 8px;
+  height: 8px;
+  background: #e8b06b;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(232, 176, 107, 0.14), 0 0 12px rgba(232, 176, 107, 0.5);
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
+}
+
+/* 滚动逐条点亮 */
+.js-ready .timeline-item {
+  opacity: 0.34;
+  transition: opacity 0.6s ease;
+}
+
+.js-ready .timeline-item.is-lit {
+  opacity: 1;
+}
+
+.js-ready .timeline-item.is-lit::before {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 6px rgba(232, 176, 107, 0.16), 0 0 20px rgba(232, 176, 107, 0.85);
+}
+
+.timeline-year {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #e8b06b;
+}
+
+.timeline-text {
+  margin-top: 4px;
+  font-size: 15px;
+  color: #ded1c0;
+}
+
+/* --- 领袖人物列：45%–60% 竖向折线排布 --- */
+.leader-rail {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: center;
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.leader-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 176, 107, 0) 0%,
+    rgba(232, 176, 107, 0.45) 12%,
+    rgba(232, 176, 107, 0.45) 88%,
+    rgba(232, 176, 107, 0) 100%
+  );
+}
+
+.leader-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: clamp(78px, 7.4vw, 112px);
+  color: #eadfd2;
+  text-decoration: none;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.leader-card:nth-child(odd) {
+  align-self: flex-start;
+}
+
+.leader-card:nth-child(even) {
+  align-self: flex-end;
+}
+
+.leader-avatar {
+  display: block;
+  width: clamp(58px, 5.6vw, 84px);
+  height: clamp(58px, 5.6vw, 84px);
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 2px solid rgba(232, 176, 107, 0.55);
+  border-radius: 50%;
+  background: #2a0d0b;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.leader-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.25) contrast(1.03);
+  transition: filter 0.4s ease, transform 0.5s ease;
+}
+
+.leader-name {
+  font-family: "LongMarchSerif", "Songti SC", "STSong", serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #f6ecdb;
+  white-space: nowrap;
+}
+
+.leader-role {
+  margin-top: 2px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: #b3906a;
+  white-space: nowrap;
+}
+
+.leader-card:hover {
+  transform: translateY(-6px);
+}
+
+.leader-card:hover .leader-avatar {
+  border-color: #e8b06b;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.55), 0 0 18px rgba(232, 176, 107, 0.45);
+}
+
+.leader-card:hover .leader-avatar img {
+  filter: grayscale(0) contrast(1.05);
+  transform: scale(1.06);
+}
+
+/* ---------- 7. ③ 长征背景与简介（米白） ---------- */
+.section-light {
+  padding: 96px 24px;
+  color: #2b2420;
+  background-color: #f6efe2;
+}
+
+/* 背景图：红飘带主题图，透明度偏浅 */
+.section-light::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("images/background/bg-column2heng-jpg.jpg") center center / cover no-repeat;
+  filter: saturate(0.8) blur(1px);
+  opacity: 0.85;
+}
+
+/* 米白渐层：保证文字对比度，同时让图片只作氛围 */
+.section-light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 244, 234, 0.45) 0%,
+    rgba(246, 239, 226, 0.55) 42%,
+    rgba(242, 233, 217, 0.66) 100%
+  );
+}
+
+.section-light .section-label {
+  color: #a8552f;
+}
+
+.section-light .section-title {
+  color: #3a1412;
+}
+
+.section-light .lead {
+  color: #4a3f37;
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.intro-card {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 20px;
+  background: #fff;
+  border: 1px solid #e6ddcd;
+  border-radius: 2px;
+  box-shadow: 0 2px 14px rgba(80, 45, 30, 0.06);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.intro-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 34px rgba(80, 45, 30, 0.14);
+}
+
+.intro-img {
+  width: 100%;
+  height: 150px;
+  margin-bottom: 14px;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.92);
+}
+
+.intro-card h3 {
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #8b1a1a;
+}
+
+.intro-card p {
+  font-size: 14px;
+  color: #3a322c;
+}
+
+/* ---------- 8. ④ 今日余晖（黑色） ---------- */
+.section-black {
+  padding: 96px 24px;
+  color: #e9e1d4;
+  background-color: #0b0b0b;
+}
+
+/* 背景图：水墨风长征群像，透明度偏浅 */
+.section-black::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("images/background/bg-sun.jpg") center center / cover no-repeat;
+  filter: saturate(0.85) contrast(1.05);
+  opacity: 0.55;
+}
+
+.section-black::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(78% 60% at 86% 0%, rgba(150, 35, 28, 0.34) 0%, rgba(11, 11, 11, 0) 62%),
+    linear-gradient(
+      95deg,
+      rgba(8, 8, 8, 0.93) 0%,
+      rgba(8, 8, 8, 0.8) 42%,
+      rgba(8, 8, 8, 0.55) 78%,
+      rgba(8, 8, 8, 0.42) 100%
+    );
+}
+
+.section-black .section-label {
+  color: #d9a05c;
+}
+
+.section-black .section-title {
+  color: #f7efe2;
+}
+
+.section-black .lead {
+  color: #c8bcaa;
+}
+
+.impact-list {
+  margin-top: 10px;
+}
+
+.impact-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.impact-number {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #c23b3b, #7d1616);
+  border-radius: 50%;
+}
+
+.impact-text h4 {
+  margin-bottom: 4px;
+  font-size: 16px;
+  color: #f4ecdf;
+}
+
+.impact-text p {
+  font-size: 14px;
+  color: #cec2b0;
+}
+
+/* ---------- 9. 页脚 ---------- */
+.site-footer {
+  padding: 28px 24px;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-align: center;
+  color: #7a7263;
+  background: #080808;
+  border-top: 1px solid rgba(232, 176, 107, 0.12);
+}
+
+.site-footer small {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #5d574c;
+}
+
+/* ---------- 10. 图片署名 ---------- */
+.credit {
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 0.2px;
+  color: currentColor;
+  opacity: 0.55;
+}
+
+.credit a {
+  color: inherit;
+}
+
+.section-light .credit,
+.section-black .credit {
+  margin-top: 18px;
+}
+
+/* ---------- 11. 响应式 ---------- */
+/* 1920 及超宽屏：内容居中、间距放大 */
+@media (min-width: 1600px) {
+  .section-timeline .section-inner {
+    grid-template-columns: 45% 15%;
+  }
+
+  .timeline-lead {
+    max-width: 600px;
+  }
+}
+
+/* 常见笔记本与 1440 规格 */
+@media (max-width: 1200px) {
+  .intro-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 窄屏 / 720 规格：三栏改为纵向堆叠 */
+@media (max-width: 900px) {
+  .site-nav {
+    padding: 12px 20px;
+  }
+
+  .site-nav .brand {
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+
+  .site-nav ul {
+    gap: 14px;
+  }
+
+  .site-nav a {
+    font-size: 13px;
+  }
+
+  .section {
+    padding: 72px 20px;
+  }
+
+  .hero {
+    padding: 110px 7% 70px;
+  }
+
+  .hero-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 34px;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+  }
+
+  .hero-poem-card {
+    width: min(56%, 220px);
+  }
+
+  .section-timeline {
+    padding: 0;
+  }
+
+  .section-timeline .section-inner {
+    display: block;
+    padding: 72px 20px;
+  }
+
+  .timeline-col {
+    padding: 0;
+  }
+
+  .timeline-bg-layer {
+    width: 100%;
+    opacity: 0.3;
+  }
+
+  .leader-rail {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px 26px;
+    margin-top: 40px;
+  }
+
+  .leader-rail::before {
+    display: none;
+  }
+
+  .leader-card,
+  .leader-card:nth-child(odd),
+  .leader-card:nth-child(even) {
+    align-self: center;
+    width: 92px;
+  }
+
+  .leader-avatar {
+    width: 68px;
+    height: 68px;
+  }
+
+  .section-light::before {
+    background-attachment: local;
+    opacity: 0.34;
+  }
+
+  .section-black::before {
+    opacity: 0.3;
+  }
+
+  .intro-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+/* 720 规格：两列卡片改为单列，标题收紧 */
+@media (max-width: 760px) {
+  .section-title {
+    letter-spacing: 4px;
+  }
+
+  .intro-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .intro-img {
+    height: 180px;
+  }
+}
+
+@media (max-width: 560px) {
+  .site-nav ul {
+    gap: 10px;
+  }
+
+  .site-nav a {
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .hero-title {
+    font-size: 44px;
+    letter-spacing: 8px;
+  }
+
+  .hero-sub {
+    letter-spacing: 4px;
+  }
+
+  .leader-card {
+    width: 80px;
+  }
+
+  .leader-avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  .leader-name {
+    font-size: 12px;
+  }
+
+  .leader-role {
+    font-size: 9px;
+  }
+}

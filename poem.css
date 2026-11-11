@@ -1,0 +1,471 @@
+/* ============================================================
+   长征诗卷 · 子页面样式  poem.css
+   与 style.css 配合使用（字体、导航、页脚复用主站样式）
+
+   目录
+   1. 诗卷封面（第1页）
+   2. 诗词卡片
+   3. 单首诗词页（第2—6页）
+   4. 页内翻页与右侧导航点
+   5. 响应式
+   ============================================================ */
+
+/* ---------- 1. 诗卷封面（第1页） ---------- */
+.poem-cover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 57px);
+  padding: 92px 6% 96px;
+  overflow: hidden;
+  color: #f2e8d9;
+  background-color: #0b0708;
+  background-image:
+    radial-gradient(95% 65% at 50% 0%, rgba(92, 22, 18, 0.95) 0%, rgba(22, 10, 9, 0.55) 55%, rgba(9, 5, 5, 1) 100%),
+    linear-gradient(180deg, #150a09 0%, #090505 100%);
+}
+
+/* 封面巨型水印字 */
+.poem-cover::before {
+  content: "诗";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-family: "LongMarchSerif", "Songti SC", "STSong", serif;
+  font-size: clamp(300px, 50vw, 700px);
+  line-height: 1;
+  color: rgba(232, 176, 107, 0.055);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.cover-inner {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cover-label {
+  margin-bottom: 18px;
+  font-size: 12px;
+  letter-spacing: 8px;
+  color: #b98a4e;
+}
+
+.cover-title {
+  margin-bottom: 20px;
+  font-size: clamp(46px, 8vw, 96px);
+  line-height: 1.12;
+  letter-spacing: 14px;
+  color: #fbf3e4;
+  text-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+}
+
+.cover-sub {
+  margin-bottom: 14px;
+  font-size: clamp(15px, 1.6vw, 19px);
+  letter-spacing: 4px;
+  color: #e3cfa9;
+}
+
+.cover-desc {
+  max-width: 760px;
+  margin: 0 auto 12px;
+  font-size: 14px;
+  line-height: 2.05;
+  color: #c7b9a4;
+}
+
+.cover-rule {
+  display: block;
+  width: 96px;
+  height: 1px;
+  margin: 30px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(232, 176, 107, 0.8), transparent);
+}
+
+/* ---------- 2. 诗词卡片 ---------- */
+.poem-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  margin-top: 46px;
+}
+
+.poem-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 232px;
+  padding: 20px 18px 18px;
+  overflow: hidden;
+  color: #f2e8d9;
+  text-decoration: none;
+  text-align: left;
+  background-color: #1a1010;
+  background-image: linear-gradient(180deg, rgba(10, 6, 6, 0.5) 0%, rgba(10, 6, 6, 0.92) 72%),
+    var(--card-img);
+  background-position: center;
+  background-size: cover;
+  border: 1px solid rgba(232, 176, 107, 0.24);
+  border-radius: 3px;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease,
+    border-color 0.45s ease;
+}
+
+/* 悬停时卡片突起 */
+.poem-card:hover {
+  border-color: #e8b06b;
+  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(232, 176, 107, 0.5);
+  transform: translateY(-14px);
+}
+
+.poem-card::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  bottom: 0;
+  left: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(232, 176, 107, 0.85), transparent);
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.poem-card:hover::after {
+  opacity: 1;
+}
+
+.card-index {
+  margin-bottom: 10px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #d9a05c;
+}
+
+.card-title {
+  margin-bottom: 10px;
+  font-family: "LongMarchSerif", "Songti SC", "STSong", serif;
+  font-size: 19px;
+  line-height: 1.5;
+  letter-spacing: 2px;
+  color: #fdf5e7;
+}
+
+.card-line {
+  margin-bottom: auto;
+  font-size: 13px;
+  line-height: 1.95;
+  color: #d7c8b2;
+}
+
+.card-meta {
+  display: block;
+  margin-top: 14px;
+  padding-top: 12px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #a89478;
+  border-top: 1px dashed rgba(232, 176, 107, 0.28);
+}
+
+.card-go {
+  margin-top: 8px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #e8b06b;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.poem-card:hover .card-go {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cover-hint {
+  margin-top: 34px;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #8d7c68;
+}
+
+/* 封面图片来源署名（浅色小字） */
+.cover-credit {
+  max-width: 820px;
+  margin: 18px auto 0;
+  font-size: 11px;
+  line-height: 1.9;
+  color: #8d7c68;
+  opacity: 0.75;
+}
+
+/* ---------- 3. 单首诗词页（第2—6页） ---------- */
+.poem-page {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding: 110px 6% 110px;
+  overflow: hidden;
+  color: #f1e7d8;
+  background-color: #0b0708;
+}
+
+/* 诗词背景图（可通过 --page-img 变量逐页指定） */
+.page-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: var(--page-img);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  filter: saturate(0.92) contrast(1.02) blur(0.4px);
+  opacity: 0.82;
+  transform: scale(1.04);
+}
+
+/* 暗色渐层：突出文字主体 */
+.page-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(8, 5, 5, 0.96) 0%,
+      rgba(8, 5, 5, 0.9) 40%,
+      rgba(8, 5, 5, 0.5) 70%,
+      rgba(8, 5, 5, 0.16) 100%),
+    linear-gradient(180deg,
+      rgba(8, 5, 5, 0.88) 0%,
+      rgba(8, 5, 5, 0) 20%,
+      rgba(8, 5, 5, 0) 76%,
+      rgba(8, 5, 5, 0.9) 100%);
+}
+
+.page-inner {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.poem-kicker {
+  margin-bottom: 14px;
+  font-size: 12px;
+  letter-spacing: 5px;
+  color: #e8b06b;
+}
+
+.poem-title {
+  margin-bottom: 8px;
+  font-size: clamp(30px, 4.2vw, 50px);
+  line-height: 1.3;
+  letter-spacing: 6px;
+  color: #fdf6e9;
+  text-shadow: 0 6px 26px rgba(0, 0, 0, 0.7);
+}
+
+.poem-author {
+  margin-bottom: 26px;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #c9b79f;
+}
+
+.poem-lines {
+  padding-left: clamp(18px, 2.4vw, 32px);
+  border-left: 2px solid rgba(232, 176, 107, 0.55);
+}
+
+.poem-lines p {
+  font-size: clamp(17px, 1.7vw, 23px);
+  line-height: 2.3;
+  letter-spacing: 2px;
+  color: #f3ead9;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
+}
+
+/* 右侧阅读卡：背景介绍与意义 */
+.poem-note {
+  padding: clamp(22px, 2.6vw, 34px);
+  background: rgba(14, 8, 8, 0.62);
+  border: 1px solid rgba(232, 176, 107, 0.26);
+  border-left: 3px solid #b7332c;
+  border-radius: 2px;
+  backdrop-filter: blur(6px);
+}
+
+.poem-note h3 {
+  margin-bottom: 14px;
+  font-family: "LongMarchSerif", "Songti SC", "STSong", serif;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #e8b06b;
+}
+
+.poem-note p {
+  margin-bottom: 12px;
+  font-size: 15px;
+  line-height: 2.05;
+  color: #e3d7c6;
+}
+
+.poem-note .note-tag {
+  margin-bottom: 0;
+  padding-top: 12px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #b98a4e;
+  border-top: 1px dashed rgba(232, 176, 107, 0.3);
+}
+
+/* 诗词页图片来源署名 */
+.poem-note .credit {
+  margin-top: 10px;
+  font-size: 10.5px;
+  color: #9a8b76;
+  opacity: 0.85;
+}
+
+/* 页内翻页 */
+.page-nav {
+  position: absolute;
+  right: 6%;
+  bottom: 26px;
+  left: 6%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+.page-nav a {
+  padding: 8px 2px;
+  color: #c9b79f;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.page-nav a:hover {
+  color: #fff;
+  border-bottom-color: #e8b06b;
+}
+
+.page-index {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #8d7c68;
+}
+
+/* ---------- 4. 右侧导航点 ---------- */
+.poem-dots {
+  position: fixed;
+  top: 50%;
+  right: 18px;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transform: translateY(-50%);
+}
+
+.poem-dots a {
+  display: block;
+  width: 9px;
+  height: 9px;
+  background: transparent;
+  border: 1px solid rgba(232, 176, 107, 0.7);
+  border-radius: 50%;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.poem-dots a:hover {
+  background: #e8b06b;
+  transform: scale(1.25);
+}
+
+/* ---------- 5. 响应式 ---------- */
+@media (max-width: 1100px) {
+  .poem-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .poem-cover {
+    padding: 84px 6% 80px;
+  }
+
+  .cover-title {
+    letter-spacing: 8px;
+  }
+
+  .poem-card {
+    min-height: 210px;
+  }
+
+  .poem-dots {
+    display: none;
+  }
+
+  .poem-page {
+    align-items: flex-start;
+    padding: 92px 6% 96px;
+  }
+
+  .page-inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .page-bg {
+    opacity: 0.4;
+  }
+
+  .poem-lines p {
+    font-size: 17px;
+    line-height: 2.1;
+  }
+
+  .page-nav {
+    position: static;
+    width: min(1180px, 100%);
+    margin: 34px auto 0;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .poem-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .cover-desc {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 460px) {
+  .poem-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .cover-title {
+    font-size: 40px;
+    letter-spacing: 4px;
+  }
+}
